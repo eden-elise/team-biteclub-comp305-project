@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>4-Character Binary Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
+
+        .character-card {
+            padding: 15px;
+            background: #222;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        .binary-slot {
+            display: inline-block;
+            padding: 10px;
+            background: #333;
+            margin: 5px;
+            border-radius: 6px;
+            cursor: grab;
+        }
+
+        #slots,
+        #choices {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        #achievementsContainer {
+            display: flex;
+            gap: 50px;
+        }
+
+        #numbersTable {
+            display: grid;
+            grid-template-columns: repeat(16, 30px);
+            gap: 5px;
+            margin-left: 20px;
+        }
+
+        .numberCell {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 4px;
+            background: #222;
+        }
+
+        .highlighted {
+            font-weight: bold;
+            background: #0a0;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>4-Character Binary Game</h1>
+    <button id="viewAchievementsBtn">View Achievements</button>
+
+    <div id="mainMenu" class="screen active">
+          <h2>Main Menu</h2>
+          <button id="startGameBtn">Start Game</button>
+    </div>
+
+    <div id="characterSelect" class="screen">
+          <h2>Select Your Character</h2>
+          <div id="chars"></div>
+    </div>
+
+    <div id="levelScreen" class="screen">
+          <h2 id="levelTitle">Level</h2>
+          <p>Beat the level to get a binary pair!</p>
+          <button id="beatLevelBtn">Beat Level</button>
+          <p id="earned"></p>
+    </div>
+
+    <div id="finalScreen" class="screen">
+          <h2>Reorder Your 4 Binary Pairs</h2>
+          <p>Drag these to arrange:</p>
+          <div id="choices"></div>
+          <h3>Your Order:</h3>
+          <div id="slots"></div>
+          <button id="calcBtn">Calculate Decimal</button>
+          <h3 id="result"></h3>
+          <button id="restartBtn">Restart Game</button>
+    </div>
+
+    <div id="achievementsScreen" class="screen">
+          <div id="achievementsContainer">
+                <div>
+                      <h2>Achievements List</h2>
+                      <ul id="achievementsList"></ul>
+                      <button id="resetAchievementsBtn">Reset Achievements</button>
+                      <button id="backBtn">Back</button>
+                    </div>
+                <div>
+                      <h2>Decimal Numbers Won</h2>
+                      <div id="numbersTable"></div>
+                    </div>
+              </div>
+    </div>
+
+    <script>
+        const characters = [
+            { name: "Warrior", desc: "High HP, average attack." },
+            { name: "Mage", desc: "Low HP, high magic power." },
+            { name: "Rogue", desc: "Fast attacks, moderate damage." },
+            { name: "Tank", desc: "Massive HP, low attack." }
+        ];
+        const binChoices = ["10", "01", "11", "00"];
+        let earnedBins = [];
+        let currentLevel = 1;
+        let selectedChar = null;
+        let wonDecimals = JSON.parse(localStorage.getItem("wonDecimals") || "[]");
+
+        const mainMenu = document.getElementById("mainMenu");
+        const charDiv = document.getElementById("chars");
+        const characterSelect = document.getElementById("characterSelect");
+        const levelScreen = document.getElementById("levelScreen");
+        const finalScreen = document.getElementById("finalScreen");
+        const earnedP = document.getElementById("earned");
+        const levelTitle = document.getElementById("levelTitle");
+        const beatLevelBtn = document.getElementById("beatLevelBtn");
+        const choicesDiv = document.getElementById("choices");
+        const slotsDiv = document.getElementById("slots");
+        const result = document.getElementById("result");
+        const achievementsScreen = document.getElementById("achievementsScreen");
+        const achievementsList = document.getElementById("achievementsList");
+        const numbersTable = document.getElementById("numbersTable");
+        const viewAchievementsBtn = document.getElementById("viewAchievementsBtn");
+        const backBtn = document.getElementById("backBtn");
+        const resetAchievementsBtn = document.getElementById("resetAchievementsBtn");
+        const startGameBtn = document.getElementById("startGameBtn");
+
+        startGameBtn.onclick = () => showScreen(characterSelect);
+
+        characters.forEach(c => {
+            const card = document.createElement("div");
+            card.className = "character-card";
+            card.innerHTML = `<strong>${c.name}</strong><br>${c.desc}<br><button>Select</button>`;
+            card.querySelector("button").onclick = () => {
+                selectedChar = c;
+                showScreen(levelScreen);
+            };
+            charDiv.appendChild(card);
+        });
+
+        function showScreen(screen) {
+            [mainMenu, characterSelect, levelScreen, finalScreen, achievementsScreen].forEach(s => s.classList.remove("active"));
+            screen.classList.add("active");
+        }
+
+        beatLevelBtn.onclick = () => {
+            const reward = binChoices[Math.floor(Math.random() * 4)];
+            earnedBins.push(reward);
+            earnedP.textContent = "You earned: " + reward;
+            currentLevel++;
+            if (currentLevel > 4) { setupFinal(); showScreen(finalScreen); }
+            else levelTitle.textContent = "Level " + currentLevel;
+        };
+
+        function setupFinal() {
+            choicesDiv.innerHTML = slotsDiv.innerHTML = "";
+            earnedBins.forEach(b => {
+                const block = document.createElement("div");
+                block.className = "binary-slot";
+                block.textContent = b;
+                block.draggable = true;
+                block.dataset.val = b;
+                block.ondragstart = e => {
+                    e.dataTransfer.setData("text", b);
+                    e.dataTransfer.setData("sourceId", block.id = "bin_" + Math.random());
+                };
+                choicesDiv.appendChild(block);
+            });
+            for (let i = 0; i < 4; i++) {
+                const slot = document.createElement("div");
+                slot.className = "binary-slot";
+                slot.textContent = "--";
+                slot.ondragover = e => e.preventDefault();
+                slot.ondrop = e => {
+                    const val = e.dataTransfer.getData("text");
+                    const sourceId = e.dataTransfer.getData("sourceId");
+                    const sourceEl = document.getElementById(sourceId);
+                    if (sourceEl) sourceEl.remove();
+                    slot.textContent = val;
+                    slot.dataset.val = val;
+                };
+                slotsDiv.appendChild(slot);
+            }
+        }
+
+        function binToDec(b) { return parseInt(b, 2); }
+
+        function checkAchievements(dec) {
+            if (dec % 2 === 1) localStorage.setItem("oddAchievement", "unlocked");
+            if (dec % 2 === 0) localStorage.setItem("evenAchievement", "unlocked");
+            if (selectedChar) localStorage.setItem(`${selectedChar.name}Achievement`, `unlocked`);
+            if (!wonDecimals.includes(dec)) {
+                wonDecimals.push(dec);
+                localStorage.setItem("wonDecimals", JSON.stringify(wonDecimals));
+            }
+        }
+
+        document.getElementById("calcBtn").onclick = () => {
+            const bins = [...slotsDiv.children].map(s => s.dataset.val).filter(Boolean);
+            if (bins.length < 4) { result.textContent = "Fill all 4 slots!"; return; }
+            const combined = bins.join("");
+            const dec = binToDec(combined);
+            result.textContent = `Binary ${combined} = Decimal ${dec}`;
+            checkAchievements(dec);
+        };
+
+        document.getElementById("restartBtn").onclick = () => {
+            earnedBins = []; currentLevel = 1; result.textContent = ""; earnedP.textContent = ""; levelTitle.textContent = "Level 1";
+            selectedChar = null;
+            showScreen(mainMenu);
+        };
+
+        viewAchievementsBtn.onclick = () => showAchievements();
+        backBtn.onclick = () => showScreen(mainMenu);
+
+        resetAchievementsBtn.onclick = () => {
+            if (confirm("Are you sure you want to reset all achievements and unlocked decimals?")) {
+                // List of all keys to remove (safer than localStorage.clear())
+                const keysToRemove = ["wonDecimals", "oddAchievement", "evenAchievement"];
+                characters.forEach(c => keysToRemove.push(`${c.name}Achievement`));
+
+                keysToRemove.forEach(key => localStorage.removeItem(key));
+
+                // Reset the in-memory array
+                wonDecimals = [];
+
+                // Re-render the achievements screen to show the cleared state
+                showAchievements();
+            }
+        };
+
+        function showAchievements() {
+            achievementsList.innerHTML = "";
+            numbersTable.innerHTML = "";
+
+            // Re-load wonDecimals from storage
+            wonDecimals = JSON.parse(localStorage.getItem("wonDecimals") || "[]");
+
+            // Define all possible achievements
+            const possibleAchievements = [
+                { key: "oddAchievement", name: "Odd Number Master" },
+                { key: "evenAchievement", name: "Even Number Master" },
+            ];
+
+            characters.forEach(c => {
+                possibleAchievements.push({
+                    key: `${c.name}Achievement`,
+                    name: `Beaten Game as ${c.name}`
+                });
+            });
+
+
+            possibleAchievements.forEach(ach => {
+                const isUnlocked = localStorage.getItem(ach.key);
+
+                const li = document.createElement("li");
+
+                // Apply highlighting if unlocked
+                if (isUnlocked) {
+                    li.textContent = `✅ ${ach.name}`;
+                    li.style.fontWeight = 'bold';
+                    li.style.color = '#0f0'; // Bright green for unlocked
+                } else {
+                    li.textContent = `❌ ${ach.name}`;
+                    li.style.color = '#777'; // Gray for locked
+                }
+
+                achievementsList.appendChild(li);
+            });
+
+
+            // Re-create the table and highlight based on the current wonDecimals
+            for (let i = 0; i <= 255; i++) {
+                const cell = document.createElement("div");
+                cell.className = "numberCell";
+                if (wonDecimals.includes(i)) cell.classList.add("highlighted");
+                cell.textContent = i;
+                numbersTable.appendChild(cell);
+            }
+
+            showScreen(achievementsScreen);
+        }
+    </script>
+</body>
+
+</html>

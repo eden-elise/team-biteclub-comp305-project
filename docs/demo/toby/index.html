@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="healthbar.js" defer></script>
+    <title>Byteclub DEMO</title>
+</head>
+<body>
+    <section id="mainDisplayContainer">
+        <article id="buttonContainer">
+            <h1>Options:</h1>
+                <section class="form-field" id="playerButtonOptions">
+                    <h2>Player Options:</h2>
+                    <button id="playerAttackButton" type="button">Attack</button>
+                    <button id="playerHealButton" type="button">Heal</button>
+                </section>
+        </article>
+        <article id="healthBarContainer">
+            <section class="form-field" id="healthBars">
+                <meter id="playerHealthBar" value="100" min="0" max="100">Player Health</meter>
+                <meter id="enemyHealthBar" value="100" min="0" max="100">Enemy Health</meter>
+            </section>
+        </article>
+    </section>
+</body>
+</html>

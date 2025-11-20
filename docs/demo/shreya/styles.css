@@ -1,0 +1,112 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "Tiny5", sans-serif;
+}
+
+:root {
+  --bg: #646e6e;
+  --mc: #1c0945;
+  --attack-green-act: #68f46f;
+  --attack-green: #0bad13;
+}
+
+body {
+  background-color: var(--bg);
+  text-align: center;
+  color: white;
+}
+
+.bar {
+  width: 90vw;
+  height: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5vw;
+  border: 2px solid black;
+  font-size: 25px;
+  padding: 0.5%;
+}
+
+#health {
+  background-color: red;
+  margin-bottom: 0.3px;
+}
+
+#attack {
+  background-color: var(--attack-green);
+}
+
+.char {
+  width: 100px;
+  height: 100px;
+  background-color: black;
+  color: white;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+}
+
+#mc {
+  background-color: var(--mc);
+}
+
+#bad {
+  margin-left: 2vw;
+}
+
+section {
+  margin: 100px;
+  display: flex;
+  justify-content: center;
+  gap: 5vw;
+}
+
+
+story-panel {
+  display: block;
+  background-color: black;
+  color: white;
+  padding: 1rem;
+  width: fit-content;
+  font-size: 14px;
+  margin: auto;
+  max-width: 80vw;
+  border: 2px solid white;
+  min-height: 100px;
+  overflow-y: auto;
+}
+
+
+.controls {
+  margin-top: 20px;
+}
+
+#attack-btn,
+#heal-btn {
+  font-size: 25px;
+  background-color: var(--mc);
+  color: white;
+  border: 2px solid black;
+  padding: 0.5rem 1rem;
+  margin: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#attack-btn:hover {
+  background-color: var(--attack-green-act);
+  color: black;
+}
+
+#heal-btn {
+  background-color: #147a2e;
+}
+
+#heal-btn:hover {
+  background-color: #68f46f;
+  color: black;
+}

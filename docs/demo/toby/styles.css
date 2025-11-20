@@ -1,0 +1,71 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: sans-serif;
+    min-width: 500px;   
+    min-height: 300px;  
+}
+
+#mainDisplayContainer {
+    display: flex;
+    height: 100vh; 
+    min-width: 500px;
+    min-height: 300px;
+}
+
+#buttonContainer {
+    flex: 1;
+    background: linear-gradient(to bottom right, #4caaf6 0%, #348fdd 50%, #1b73c4 100%);
+    color: white;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#buttonContainer h1 {
+    font-size: 2.5rem;
+    margin: 0 0 1rem 0;
+}
+
+#buttonOptions {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; 
+}
+
+#healthBarContainer {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+
+.form-field {
+    display: block;
+    margin-bottom: 1.5rem;
+}
+
+
+#healthBars {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+button {
+    background-color: #1b73c4;
+    color: white;
+    border: none;
+    border-radius: 0.15rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1661a2;
+}
+

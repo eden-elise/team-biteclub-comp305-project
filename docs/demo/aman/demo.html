@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYTECLUB - Castle Nocturne</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital@0;1&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #c0c0c0;
+            font-family: 'Crimson Text', serif;
+            font-size: 18px;
+            line-height: 1.6;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated background effect */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a0010 0%, #000 70%);
+            animation: pulse 20s ease-in-out infinite;
+            z-index: -2;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.8;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Fog effect */
+        .fog {
+            position: fixed;
+            width: 200%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path d="M0 10 Q 25 0 50 10 T 100 10 L 100 20 L 0 20 Z" fill="rgba(50,0,20,0.1)"/></svg>') repeat-x;
+            animation: drift 60s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes drift {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+        #game-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Title Screen */
+        #title-screen {
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeIn 2s;
+        }
+
+        .game-title {
+            font-family: 'Cinzel', serif;
+            font-size: 4em;
+            font-weight: 600;
+            color: #8b0000;
+            text-shadow:
+                0 0 10px #ff0000,
+                0 0 20px #800000,
+                0 0 30px #400000,
+                2px 2px 4px #000;
+            margin-bottom: 20px;
+            animation: bloodPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes bloodPulse {
+
+            0%,
+            100% {
+                text-shadow: 0 0 10px #ff0000, 0 0 20px #800000, 0 0 30px #400000, 2px 2px 4px #000;
+            }
+
+            50% {
+                text-shadow: 0 0 20px #ff0000, 0 0 30px #800000, 0 0 40px #400000, 2px 2px 6px #000;
+            }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+
+        /* HUD */
+        #hud {
+            background: linear-gradient(to bottom, #1a0010, #0a0005);
+            border: 2px solid #400020;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: none;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .stat-value {
+            font-family: 'Cinzel', serif;
+            color: #c0c0c0;
+            font-size: 1.1em;
+        }
+
+        .health-bar {
+            width: 150px;
+            height: 20px;
+            background: #1a0000;
+            border: 1px solid #400020;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(to right, #8b0000, #dc143c);
+            transition: width 0.3s ease;
+        }
+
+        /* Main Content Area */
+        #content {
+            flex: 1;
+            background: rgba(10, 0, 5, 0.8);
+            border: 2px solid #400020;
+            border-radius: 8px;
+            padding: 30px;
+            overflow-y: auto;
+            display: none;
+            position: relative;
+        }
+
+        #content::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #content::-webkit-scrollbar-track {
+            background: #1a0010;
+        }
+
+        #content::-webkit-scrollbar-thumb {
+            background: #400020;
+            border-radius: 5px;
+        }
+
+        .scene-text {
+            margin-bottom: 20px;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .memory-fragment {
+            background: rgba(139, 0, 0, 0.1);
+            border-left: 3px solid #8b0000;
+            padding: 15px;
+            margin: 20px 0;
+            font-style: italic;
+            color: #dc143c;
+            animation: glow 2s ease-in-out;
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 5px rgba(220, 20, 60, 0.5);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(220, 20, 60, 0.8);
+            }
+        }
+
+        /* Combat Display */
+        .combat-zone {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid #8b0000;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .enemy-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .enemy-name {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5em;
+            color: #dc143c;
+            margin-bottom: 10px;
+        }
+
+        .enemy-health-bar {
+            width: 100%;
+            max-width: 300px;
+            height: 25px;
+            background: #1a0000;
+            border: 2px solid #8b0000;
+            border-radius: 5px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .enemy-health-fill {
+            height: 100%;
+            background: linear-gradient(to right, #400020, #8b0000);
+            transition: width 0.5s ease;
+        }
+
+        .combat-text {
+            text-align: center;
+            margin: 20px 0;
+            min-height: 60px;
+            color: #ff6b6b;
+            font-style: italic;
+        }
+
+        /* Choices */
+        #choices {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .choice-btn {
+            background: linear-gradient(135deg, #1a0010, #2a0015);
+            color: #c0c0c0;
+            border: 2px solid #400020;
+            padding: 15px 25px;
+            margin: 10px 5px;
+            font-family: 'Crimson Text', serif;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .choice-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(220, 20, 60, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .choice-btn:hover {
+            background: linear-gradient(135deg, #2a0015, #3a001a);
+            border-color: #8b0000;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.3);
+        }
+
+        .choice-btn:hover::before {
+            left: 100%;
+        }
+
+        .choice-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #0a0005, #1a0010);
+            border-color: #200010;
+        }
+
+        .choice-btn:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Memory Index */
+        #memory-index {
+            position: fixed;
+            right: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: rgba(10, 0, 5, 0.95);
+            border-left: 2px solid #400020;
+            padding: 20px;
+            overflow-y: auto;
+            transition: right 0.3s ease;
+            z-index: 100;
+        }
+
+        #memory-index.open {
+            right: 0;
+        }
+
+        .memory-toggle {
+            position: fixed;
+            right: 10px;
+            top: 10px;
+            background: #400020;
+            border: 2px solid #8b0000;
+            color: #c0c0c0;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 101;
+            font-family: 'Cinzel', serif;
+        }
+
+        .memory-item {
+            background: rgba(139, 0, 0, 0.1);
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #8b0000;
+            opacity: 0.7;
+        }
+
+        .memory-item.unlocked {
+            opacity: 1;
+        }
+
+        /* Death Screen */
+        .death-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .death-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            color: #8b0000;
+            margin-bottom: 20px;
+            animation: bloodPulse 2s ease-in-out infinite;
+        }
+
+        /* Victory Screen */
+        .victory-screen {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .victory-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3em;
+            color: gold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Animations */
+        .shake {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
+        }
+
+        .damage-flash {
+            animation: damageFlash 0.3s;
+        }
+
+        @keyframes damageFlash {
+
+            0%,
+            100% {
+                background: transparent;
+            }
+
+            50% {
+                background: rgba(255, 0, 0, 0.2);
+            }
+        }
+
+        /* Loading effect */
+        .loading-text::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+
+            0%,
+            20% {
+                content: '';
+            }
+
+            40% {
+                content: '.';
+            }
+
+            60% {
+                content: '..';
+            }
+
+            80%,
+            100% {
+                content: '...';
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="fog"></div>
+
+    <div id="game-container">
+        <div id="title-screen">
+            <h1 class="game-title">BYTECLUB</h1>
+            <p class="subtitle">Castle Nocturne awaits...</p>
+            <div style="margin: 40px 0; color: #888; max-width: 600px; margin: 40px auto;">
+                <p style="margin-bottom: 20px;">You wake up inside Castle Nocturne with no memory of how you got there.
+                </p>
+                <p style="margin-bottom: 20px;">As you climb through the castle floor by floor, defeating the creatures
+                    that guard it, fragments of your forgotten past begin to surface...</p>
+                <p>All leading you toward the vampire lord who rules this place, Lord Dravik.</p>
+            </div>
+            <button class="choice-btn" onclick="game.start()">Begin Your Ascent</button>
+        </div>
+
+        <div id="hud">
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Floor:</span>
+                    <span class="stat-value" id="floor-display">1</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Wave:</span>
+                    <span class="stat-value" id="wave-display">1/10</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Health:</span>
+                    <div class="health-bar">
+                        <div class="health-fill" id="player-health-bar"></div>
+                    </div>
+                    <span class="stat-value" id="health-display">100/100</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Memories:</span>
+                    <span class="stat-value" id="memory-count">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="content"></div>
+        <div id="choices"></div>
+    </div>
+
+    <button class="memory-toggle" onclick="game.toggleMemoryIndex()" style="display: none;">Memories</button>
+    <div id="memory-index">
+        <h2 style="font-family: 'Cinzel', serif; color: #dc143c; margin-bottom: 20px;">Memory Fragments</h2>
+        <div id="memory-list"></div>
+    </div>
+
+    <script>
+        // Sound effects using Web Audio API
+        class AudioManager {
+            constructor() {
+                this.context = null;
+                this.initialized = false;
+            }
+
+            init() {
+                if (this.initialized) return;
+                this.context = new (window.AudioContext || window.webkitAudioContext)();
+                this.initialized = true;
+            }
+
+            playHit() {
+                if (!this.initialized) return;
+                const osc = this.context.createOscillator();
+                const gain = this.context.createGain();
+                osc.connect(gain);
+                gain.connect(this.context.destination);
+                osc.frequency.value = 150;
+                osc.type = 'sawtooth';
+                gain.gain.setValueAtTime(0.3, this.context.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.1);
+                osc.start();
+                osc.stop(this.context.currentTime + 0.1);
+            }
+
+            playBlock() {
+                if (!this.initialized) return;
+                const osc = this.context.createOscillator();
+                const gain = this.context.createGain();
+                osc.connect(gain);
+                gain.connect(this.context.destination);
+                osc.frequency.value = 80;
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.2, this.context.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 0.2);
+                osc.start();
+                osc.stop(this.context.currentTime + 0.2);
+            }
+
+            playDeath() {
+                if (!this.initialized) return;
+                const osc = this.context.createOscillator();
+                const gain = this.context.createGain();
+                osc.connect(gain);
+                gain.connect(this.context.destination);
+                osc.frequency.value = 200;
+                osc.frequency.exponentialRampToValueAtTime(50, this.context.currentTime + 1);
+                osc.type = 'sawtooth';
+                gain.gain.setValueAtTime(0.5, this.context.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + 1);
+                osc.start();
+                osc.stop(this.context.currentTime + 1);
+            }
+
+            playMemory() {
+                if (!this.initialized) return;
+                const osc = this.context.createOscillator();
+                const gain = this.context.createGain();
+                osc.connect(gain);
+                gain.connect(this.context.destination);
+                osc.frequency.value = 440;
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0, this.context.currentTime);
+                gain.gain.linearRampToValueAtTime(0.2, this.context.currentTime + 0.1);
+                gain.gain.linearRampToValueAtTime(0, this.context.currentTime + 0.5);
+                osc.start();
+                osc.stop(this.context.currentTime + 0.5);
+            }
+        }
+
+        // Game Data
+        const gameData = {
+            waves: [
+                {
+                    name: "The Awakening",
+                    enemy: { name: "Thrall", hp: 30, damage: 5, description: "A mindless servant, flesh hanging loose from ancient bones" },
+                    story: "You wake up in a cold stone chamber with no memory of how you arrived. The castle feels alive... watching.",
+                    memory: null
+                },
+                {
+                    name: "Whispering Corridor",
+                    enemy: { name: "Whispering Ghost", hp: 25, damage: 7, description: "A spirit that feeds on fear, its form shifting like smoke" },
+                    story: "Whispers echo around you, calling your name even though no one's there. The walls themselves seem to breathe.",
+                    memory: null
+                },
+                {
+                    name: "Prison Cells",
+                    enemy: { name: "Ghoul", hp: 40, damage: 8, description: "A twisted prisoner, transformed by years of darkness and hunger" },
+                    story: "Chains sway as if someone invisible just walked by. You find a ripped note scrawled in blood:",
+                    memory: { id: "first_note", text: "He erased your past. He always does." }
+                },
+                {
+                    name: "Servant's Hall",
+                    enemy: { name: "Vampire Servant", hp: 50, damage: 10, description: "Dravik's loyal soldier, eyes glowing with unholy devotion" },
+                    story: "Old servant uniforms lie torn apart. A presence lurks behind you. The servants mutter as they attack: 'You gave the orders... you were one of us...'",
+                    memory: null
+                },
+                {
+                    name: "Mirror Hall",
+                    enemy: { name: "Shadow Doppel", hp: 60, damage: 12, description: "A dark copy of yourself, moving with familiar grace" },
+                    story: "Cracked mirrors reflect a version of you that moves slightly out of sync. As you fight your shadow, it whispers:",
+                    memory: { id: "shadow_truth", text: "You came here willingly. You were his most devoted apprentice." }
+                },
+                {
+                    name: "The Study",
+                    enemy: { name: "Cursed Scholar", hp: 70, damage: 15, description: "Knowledge twisted into madness, pages floating around its form" },
+                    story: "Dusty books whisper as you pass. On a desk is a journal written in handwriting that looks exactly like yours:",
+                    memory: { id: "journal_warning", text: "If he finds me again, he will wipe my mind clean. I helped him perfect the ritual. I know its every detail." }
+                },
+                {
+                    name: "The Grand Hall",
+                    enemy: { name: "Royal Guardian", hp: 85, damage: 18, description: "An elite vampire knight in broken armor, bound by blood oath" },
+                    story: "A vast hall with tattered banners bearing a familiar crest. The guard's dying words: 'Master warned us you'd return... again and again...'",
+                    memory: null
+                },
+                {
+                    name: "Forgotten Bedroom",
+                    enemy: { name: "Memory Wraith", hp: 90, damage: 20, description: "A manifestation of your erased past, screaming silently" },
+                    story: "A bedroom that feels strangely familiar. Every object triggers flashes of forgotten moments. In a drawer, you find a full journal with your name:",
+                    memory: { id: "full_truth", text: "You were Lord Dravik's apprentice. You designed the memory erasure ritual together. This is your seventh attempt to escape." }
+                },
+                {
+                    name: "Tower Stairs",
+                    enemy: { name: "Night Sentinel", hp: 100, damage: 22, description: "Dravik's last line of defense, wreathed in shadow and blood" },
+                    story: "Wind howls through shattered windows as you ascend. Time is running out before sunrise. The Sentinel blocks your path, speaking in Dravik's voice: 'Come home, my apprentice.'",
+                    memory: null
+                },
+                {
+                    name: "The Battlements",
+                    enemy: { name: "Lord Dravik", hp: 150, damage: 25, description: "The vampire lord himself, ancient and terrible in his power" },
+                    story: "You reach the top of Castle Nocturne. Dawn breaks on the horizon. Lord Dravik appears from the shadows, his eyes filled with disappointment:",
+                    memory: { id: "final_choice", text: "My runaway apprentice... will you return to me, or fall like the rest? You always choose to forget in the end." }
+                }
+            ],
+
+            memories: {
+                first_note: "A blood-stained note: 'He erased your past. He always does.'",
+                shadow_truth: "The Shadow's whisper: 'You came here willingly as his apprentice.'",
+                journal_warning: "Your own journal: 'I helped him perfect the memory erasure ritual.'",
+                full_truth: "The complete truth: 'This is your seventh escape attempt. Each time, you forget.'",
+                final_choice: "Dravik's words: 'You always choose to forget in the end.'",
+                servant_memory: "A servant's dying gasp: 'You commanded us once... before you tried to leave.'",
+                ritual_knowledge: "Ritual notes in your handwriting: 'To break the loop, one must remember everything.'",
+                dravik_promise: "An old letter: 'Together we shall conquer death itself, my dear apprentice.'",
+                first_meeting: "A faded memory: 'You sought him out, desperate for power to forget your own past.'"
+            }
+        };
+
+        // Game State
+        class Game {
+            constructor() {
+                this.audio = new AudioManager();
+                this.currentWave = 0;
+                this.playerHP = 100;
+                this.maxHP = 100;
+                this.enemyHP = 0;
+                this.enemyMaxHP = 0;
+                this.inCombat = false;
+                this.unlockedMemories = new Set();
+                this.combatLog = [];
+                this.currentEnemy = null;
+                this.turnCount = 0;
+                this.runCount = parseInt(localStorage.getItem('byteclub_runs') || '0');
+                this.bestWave = parseInt(localStorage.getItem('byteclub_best') || '0');
+                this.allTimeMemories = new Set(JSON.parse(localStorage.getItem('byteclub_memories') || '[]'));
+            }
+
+            start() {
+                this.audio.init();
+                this.runCount++;
+                localStorage.setItem('byteclub_runs', this.runCount.toString());
+
+                document.getElementById('title-screen').style.display = 'none';
+                document.getElementById('hud').style.display = 'block';
+                document.getElementById('content').style.display = 'block';
+                document.getElementById('choices').style.display = 'block';
+                document.querySelector('.memory-toggle').style.display = 'block';
+
+                this.updateMemoryIndex();
+                this.startWave();
+            }
+
+            startWave() {
+                if (this.currentWave >= gameData.waves.length) {
+                    this.victory();
+                    return;
+                }
+
+                const wave = gameData.waves[this.currentWave];
+                this.currentEnemy = { ...wave.enemy };
+                this.enemyHP = this.currentEnemy.hp;
+                this.enemyMaxHP = this.currentEnemy.hp;
+
+                // Update HUD
+                document.getElementById('wave-display').textContent = `${this.currentWave + 1}/10`;
+                document.getElementById('floor-display').textContent = Math.floor(this.currentWave / 2) + 1;
+
+                // Display story
+                let storyHTML = `<h2 style="font-family: 'Cinzel', serif; color: #dc143c; margin-bottom: 20px;">${wave.name}</h2>`;
+                storyHTML += `<div class="scene-text">${wave.story}</div>`;
+
+                // Check for memory fragment
+                let hasMemory = false;
+                if (wave.memory) {
+                    if (!this.unlockedMemories.has(wave.memory.id)) {
+                        storyHTML += `<div class="memory-fragment">${wave.memory.text}</div>`;
+                        this.unlockMemory(wave.memory.id);
+                        hasMemory = true;
+                    }
+                }
+
+                // Add variations based on previously unlocked memories
+                if (this.allTimeMemories.has('full_truth') && this.currentWave === 0) {
+                    storyHTML += `<div class="scene-text" style="color: #888; font-style: italic;">The stone chamber feels familiar. You've awakened here before...</div>`;
+                }
+
+                document.getElementById('content').innerHTML = storyHTML;
+
+                // If there's a memory, show Next button first for reading time
+                if (hasMemory) {
+                    this.showChoices([
+                        { text: "Next →", action: () => this.showWaveChoices() }
+                    ]);
+                } else {
+                    this.showWaveChoices();
+                }
+            }
+
+            showWaveChoices() {
+                // Set up choices
+                this.showChoices([
+                    { text: "Face the enemy", action: () => this.startCombat() },
+                    { text: "Search the area", action: () => this.searchArea() }
+                ]);
+            }
+
+            searchArea() {
+                const searches = [
+                    "You find nothing but shadows and dust.",
+                    "A faint memory stirs, but slips away before you can grasp it.",
+                    "Old bloodstains mark the floor. Some look fresh.",
+                    "You discover a hidden alcove with scratched walls. Your fingernails match the marks.",
+                    "A whisper echoes: 'Seven times you've walked these halls...'"
+                ];
+
+                const randomSearch = searches[Math.floor(Math.random() * searches.length)];
+                document.getElementById('content').innerHTML += `<div class="scene-text" style="color: #888; font-style: italic;">${randomSearch}</div>`;
+
+                // Small heal chance
+                if (Math.random() < 0.3) {
+                    this.playerHP = Math.min(this.playerHP + 10, this.maxHP);
+                    document.getElementById('content').innerHTML += `<div class="scene-text" style="color: #4a4;">You find a vial of crimson liquid. It restores some health. (+10 HP)</div>`;
+                    this.updateHealthDisplay();
+                }
+
+                document.getElementById('content').innerHTML += `<div class="scene-text">But you cannot avoid the confrontation...</div>`;
+
+                // Add Next button instead of auto-transition
+                this.showChoices([
+                    { text: "Face the enemy →", action: () => this.startCombat() }
+                ]);
+            }
+
+            startCombat() {
+                this.inCombat = true;
+                this.combatLog = [];
+
+                const combatHTML = `
+                    <div class="combat-zone">
+                        <div class="enemy-display">
+                            <h3 class="enemy-name">${this.currentEnemy.name}</h3>
+                            <p style="color: #888; font-style: italic; margin-bottom: 15px;">${this.currentEnemy.description}</p>
+                            <div class="enemy-health-bar">
+                                <div class="enemy-health-fill" id="enemy-health-bar" style="width: 100%;"></div>
+                            </div>
+                            <div style="color: #888; margin-top: 5px;">HP: <span id="enemy-hp-text">${this.enemyHP}/${this.enemyMaxHP}</span></div>
+                        </div>
+                        <div class="combat-text" id="combat-text">The battle begins...</div>
+                    </div>
+                `;
+
+                document.getElementById('content').innerHTML += combatHTML;
+
+                this.showCombatChoices();
+            }
+
+            showCombatChoices() {
+                const choices = [
+                    { text: "Attack", action: () => this.playerAttack() },
+                    { text: "Defend", action: () => this.playerDefend() },
+                    { text: "Blood Magic", action: () => this.bloodMagic() }
+                ];
+
+                this.showChoices(choices);
+            }
+
+            playerAttack() {
+                const damage = 15 + Math.floor(Math.random() * 10);
+                this.enemyHP -= damage;
+
+                this.audio.playHit();
+                document.getElementById('combat-text').innerHTML = `You strike for ${damage} damage!`;
+                this.updateEnemyHealth();
+
+                if (this.enemyHP <= 0) {
+                    this.enemyDefeated();
+                } else {
+                    setTimeout(() => this.enemyTurn(), 1000);
+                }
+            }
+
+            playerDefend() {
+                this.audio.playBlock();
+                document.getElementById('combat-text').innerHTML = "You brace yourself for the attack...";
+                setTimeout(() => this.enemyTurn(true), 1000);
+            }
+
+            bloodMagic() {
+                if (this.playerHP <= 20) {
+                    document.getElementById('combat-text').innerHTML = "Not enough health for blood magic!";
+                    setTimeout(() => this.showCombatChoices(), 1000);
+                    return;
+                }
+
+                const cost = 15;
+                const damage = 30 + Math.floor(Math.random() * 15);
+                this.playerHP -= cost;
+                this.enemyHP -= damage;
+
+                this.audio.playHit();
+                document.getElementById('combat-text').innerHTML = `Blood magic deals ${damage} damage! (You lose ${cost} HP)`;
+                this.updateHealthDisplay();
+                this.updateEnemyHealth();
+
+                if (this.enemyHP <= 0) {
+                    this.enemyDefeated();
+                } else {
+                    setTimeout(() => this.enemyTurn(), 1000);
+                }
+            }
+
+            enemyTurn(defending = false) {
+                let damage = this.currentEnemy.damage + Math.floor(Math.random() * 5);
+                if (defending) damage = Math.floor(damage * 0.5);
+
+                this.playerHP -= damage;
+
+                this.audio.playHit();
+                document.getElementById('game-container').classList.add('damage-flash');
+                setTimeout(() => document.getElementById('game-container').classList.remove('damage-flash'), 300);
+
+                document.getElementById('combat-text').innerHTML = defending ?
+                    `You block, reducing damage to ${damage}!` :
+                    `The ${this.currentEnemy.name} attacks for ${damage} damage!`;
+
+                this.updateHealthDisplay();
+
+                if (this.playerHP <= 0) {
+                    this.gameOver();
+                } else {
+                    setTimeout(() => this.showCombatChoices(), 1000);
+                }
+            }
+
+            updateHealthDisplay() {
+                const healthPercent = (this.playerHP / this.maxHP) * 100;
+                document.getElementById('player-health-bar').style.width = `${healthPercent}%`;
+                document.getElementById('health-display').textContent = `${Math.max(0, this.playerHP)}/${this.maxHP}`;
+            }
+
+            updateEnemyHealth() {
+                const healthPercent = (this.enemyHP / this.enemyMaxHP) * 100;
+                document.getElementById('enemy-health-bar').style.width = `${Math.max(0, healthPercent)}%`;
+                document.getElementById('enemy-hp-text').textContent = `${Math.max(0, this.enemyHP)}/${this.enemyMaxHP}`;
+            }
+
+            enemyDefeated() {
+                this.audio.playMemory();
+                this.inCombat = false;
+
+                // Clear the combat zone and show victory text
+                const combatZone = document.querySelector('.combat-zone');
+                if (combatZone) {
+                    combatZone.style.opacity = '0.5';
+                    combatZone.style.pointerEvents = 'none';
+                }
+
+                document.getElementById('content').innerHTML += `
+                    <div class="scene-text" style="color: #4a4; margin-top: 20px;">
+                        The ${this.currentEnemy.name} falls, dissolving into shadow and dust.
+                    </div>
+                `;
+
+                // Heal after combat
+                const healAmount = 5;
+                this.playerHP = Math.min(this.playerHP + healAmount, this.maxHP);
+                document.getElementById('content').innerHTML += `
+                    <div class="scene-text" style="color: #4a4;">
+                        You absorb some of its essence. (+${healAmount} HP)
+                    </div>
+                `;
+                this.updateHealthDisplay();
+
+                // Update best wave
+                if (this.currentWave + 1 > this.bestWave) {
+                    this.bestWave = this.currentWave + 1;
+                    localStorage.setItem('byteclub_best', this.bestWave.toString());
+                }
+
+                this.currentWave++;
+
+                // Clear any existing choices first, then add Next button
+                document.getElementById('choices').innerHTML = '';
+                setTimeout(() => {
+                    this.showChoices([
+                        { text: "Next →", action: () => this.afterBattleChoice() }
+                    ]);
+                }, 100);
+            }
+
+            afterBattleChoice() {
+                // Clear the old combat content
+                document.getElementById('content').innerHTML = '';
+
+                if (this.currentWave >= gameData.waves.length) {
+                    this.finalChoice();
+                } else {
+                    // Show transition text
+                    document.getElementById('content').innerHTML = `
+                        <div class="scene-text" style="text-align: center; padding: 20px;">
+                            <p style="color: #888; font-style: italic;">The shadows recede, revealing paths ahead...</p>
+                        </div>
+                    `;
+
+                    this.showChoices([
+                        { text: "Continue ascending", action: () => this.startWave() },
+                        { text: "Rest and reflect", action: () => this.rest() }
+                    ]);
+                }
+            }
+
+            rest() {
+                const restStories = [
+                    "You sit in the darkness, trying to piece together fragments of memory.",
+                    "The castle whispers secrets you almost understand.",
+                    "You close your eyes and see flashes of a life you don't remember living.",
+                    "Blood drips somewhere in the distance. Each drop sounds like a heartbeat."
+                ];
+
+                const story = restStories[Math.floor(Math.random() * restStories.length)];
+                document.getElementById('content').innerHTML = `<div class="scene-text" style="font-style: italic;">${story}</div>`;
+
+                // Full heal on rest
+                this.playerHP = this.maxHP;
+                this.updateHealthDisplay();
+
+                document.getElementById('content').innerHTML += `<div class="scene-text" style="margin-top: 20px;">Strength renewed, you continue your ascent.</div>`;
+
+                // Add Next button for pacing
+                this.showChoices([
+                    { text: "Continue →", action: () => this.startWave() }
+                ]);
+            }
+
+            finalChoice() {
+                document.getElementById('content').innerHTML = `
+                    <div style="text-align: center; padding: 40px 0;">
+                        <h2 style="font-family: 'Cinzel', serif; color: #dc143c; margin-bottom: 30px;">The Final Confrontation</h2>
+                        <div class="scene-text" style="margin-bottom: 20px;">
+                            Lord Dravik stands before you, his ancient eyes filled with something between disappointment and hope.
+                        </div>
+                        <div class="memory-fragment">
+                            "My dear apprentice," he says softly. "Seven times you've stood here. Seven times you've made your choice. 
+                            Will this time be different? Will you finally accept what you are... what we built together?"
+                        </div>
+                        <div class="scene-text" style="margin: 20px 0;">
+                            He extends his hand, offering you a place at his side once more.
+                        </div>
+                    </div>
+                `;
+
+                this.showChoices([
+                    { text: "Destroy Dravik and break the cycle", action: () => this.destroyDravik() },
+                    { text: "Accept his offer and return as his apprentice", action: () => this.joinDravik() },
+                    { text: "Refuse both paths and seek another way", action: () => this.thirdPath() }
+                ]);
+            }
+
+            destroyDravik() {
+                this.unlockMemory('ritual_knowledge');
+
+                document.getElementById('content').innerHTML = `
+                    <div class="victory-screen">
+                        <h2 class="victory-title">FREEDOM</h2>
+                        <div class="scene-text" style="margin-bottom: 20px;">
+                            Using the very ritual you helped create, you turn its power against Dravik. 
+                            The vampire lord crumbles to dust, his hold on the castle broken.
+                        </div>
+                        <div class="scene-text" style="margin-bottom: 20px;">
+                            As dawn breaks fully over Castle Nocturne, the trapped souls are finally freed. 
+                            Including yours.
+                        </div>
+                        <div class="memory-fragment">
+                            You remember everything now. Every loop. Every choice. Every failure.
+                            But this time... this time you chose differently.
+                        </div>
+                        <div style="margin-top: 30px; color: #888;">
+                            <p>Runs completed: ${this.runCount}</p>
+                            <p>Memories collected: ${this.allTimeMemories.size}/${Object.keys(gameData.memories).length}</p>
+                        </div>
+                    </div>
+                `;
+
+                this.showChoices([
+                    { text: "New Game+", action: () => location.reload() }
+                ]);
+            }
+
+            joinDravik() {
+                this.unlockMemory('dravik_promise');
+                this.unlockMemory('first_meeting');
+
+                document.getElementById('content').innerHTML = `
+                    <div class="death-screen">
+                        <h2 class="death-title">THE CYCLE CONTINUES</h2>
+                        <div class="scene-text" style="margin-bottom: 20px;">
+                            You take Dravik's hand. For a moment, you remember everything—your studies, your ambitions, 
+                            the power you sought to forget your own painful past.
+                        </div>
+                        <div class="scene-text" style="margin-bottom: 20px;">
+                            "Welcome home," Dravik whispers, and you feel the familiar touch of the ritual beginning.
+                        </div>
+                        <div class="memory-fragment">
+                            Your memories fade like smoke. Tomorrow, you will wake in the prison cells again, 
+                            with no memory of this choice. The eighth cycle begins...
+                        </div>
+                        <div style="margin-top: 30px; color: #888;">
+                            <p>The loop resets. Your memories are erased. Again.</p>
+                        </div>
+                    </div>
+                `;
+
+                this.showChoices([
+                    { text: "Wake up...", action: () => location.reload() }
+                ]);
+            }
+
+            thirdPath() {
+                document.getElementById('content').innerHTML = `
+                    <div class="scene-text" style="text-align: center; padding: 40px 0;">
+                        <h3 style="font-family: 'Cinzel', serif; color: #dc143c; margin-bottom: 20px;">The Unexpected Choice</h3>
+                        <div style="margin-bottom: 20px;">
+                            You turn away from both destruction and servitude, seeking something neither of you expected.
+                        </div>
+                        <div class="memory-fragment">
+                            "Interesting," Dravik murmurs. "In seven cycles, you've never tried this before."
+                        </div>
+                        <div style="margin: 20px 0; color: #888;">
+                            But as you step toward the unknown, the castle itself rebels. 
+                            The stones crack, reality wavers, and suddenly...
+                        </div>
+                    </div>
+                `;
+
+                this.showChoices([
+                    { text: "Next →", action: () => this.thirdPathContinue() }
+                ]);
+            }
+
+            thirdPathContinue() {
+                document.getElementById('content').innerHTML += `
+                    <div class="scene-text" style="text-align: center; color: #dc143c; margin-top: 20px;">
+                        You wake up in the prison cells. The cycle cannot be broken so easily.
+                    </div>
+                `;
+                this.showChoices([
+                    { text: "Begin again", action: () => location.reload() }
+                ]);
+            }
+
+            gameOver() {
+                this.audio.playDeath();
+
+                document.getElementById('content').innerHTML = `
+                    <div class="death-screen">
+                        <h2 class="death-title">DEATH</h2>
+                        <div class="scene-text" style="margin-bottom: 20px;">
+                            Your vision fades to black as you fall to the cold stone floor.
+                        </div>
+                        <div class="scene-text" style="margin-bottom: 20px;">
+                            But death is not the end in Castle Nocturne...
+                        </div>
+                        <div class="memory-fragment">
+                            You hear Dravik's voice: "Death is merely another form of forgetting, my apprentice."
+                        </div>
+                        <div style="margin-top: 30px; color: #888;">
+                            <p>You reached Wave ${this.currentWave + 1} of 10</p>
+                            <p>Best run: Wave ${this.bestWave}</p>
+                            <p>Total memories discovered: ${this.allTimeMemories.size}/${Object.keys(gameData.memories).length}</p>
+                        </div>
+                    </div>
+                `;
+
+                this.showChoices([
+                    { text: "Wake up again...", action: () => location.reload() }
+                ]);
+            }
+
+            unlockMemory(memoryId) {
+                if (!this.unlockedMemories.has(memoryId)) {
+                    this.unlockedMemories.add(memoryId);
+                    this.allTimeMemories.add(memoryId);
+                    localStorage.setItem('byteclub_memories', JSON.stringify([...this.allTimeMemories]));
+
+                    document.getElementById('memory-count').textContent = this.unlockedMemories.size.toString();
+                    this.updateMemoryIndex();
+
+                    this.audio.playMemory();
+                }
+            }
+
+            updateMemoryIndex() {
+                const memoryList = document.getElementById('memory-list');
+                memoryList.innerHTML = '';
+
+                for (const [id, text] of Object.entries(gameData.memories)) {
+                    const memoryDiv = document.createElement('div');
+                    memoryDiv.className = 'memory-item';
+
+                    if (this.allTimeMemories.has(id)) {
+                        memoryDiv.classList.add('unlocked');
+                        memoryDiv.innerHTML = `<strong>✓</strong> ${text}`;
+                    } else {
+                        memoryDiv.innerHTML = `<strong>?</strong> <span style="color: #666;">Locked Memory</span>`;
+                    }
+
+                    memoryList.appendChild(memoryDiv);
+                }
+            }
+
+            toggleMemoryIndex() {
+                const index = document.getElementById('memory-index');
+                index.classList.toggle('open');
+            }
+
+            showChoices(choices) {
+                const choicesDiv = document.getElementById('choices');
+                // Clear any existing choices
+                choicesDiv.innerHTML = '';
+
+                // Disable all previous choice buttons if they somehow still exist
+                const oldButtons = choicesDiv.querySelectorAll('.choice-btn');
+                oldButtons.forEach(btn => btn.disabled = true);
+
+                choices.forEach(choice => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-btn';
+                    btn.textContent = choice.text;
+                    btn.onclick = () => {
+                        // Disable all buttons when one is clicked to prevent double-clicks
+                        const allBtns = choicesDiv.querySelectorAll('.choice-btn');
+                        allBtns.forEach(b => b.disabled = true);
+                        choice.action();
+                    };
+                    choicesDiv.appendChild(btn);
+                });
+            }
+
+            victory() {
+                this.destroyDravik();
+            }
+        }
+
+        // Initialize game
+        const game = new Game();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'm' || e.key === 'M') {
+                game.toggleMemoryIndex();
+            }
+        });
+
+        // Add atmospheric effects
+        function createBloodDrop() {
+            if (Math.random() > 0.98) {
+                const drop = document.createElement('div');
+                drop.style.position = 'fixed';
+                drop.style.left = Math.random() * window.innerWidth + 'px';
+                drop.style.top = '-10px';
+                drop.style.width = '3px';
+                drop.style.height = '10px';
+                drop.style.background = 'linear-gradient(to bottom, #8b0000, #400020)';
+                drop.style.borderRadius = '50%';
+                drop.style.zIndex = '1000';
+                drop.style.pointerEvents = 'none';
+                document.body.appendChild(drop);
+
+                let pos = -10;
+                const fall = setInterval(() => {
+                    pos += 2;
+                    drop.style.top = pos + 'px';
+                    if (pos > window.innerHeight) {
+                        clearInterval(fall);
+                        drop.remove();
+                    }
+                }, 20);
+            }
+        }
+
+        setInterval(createBloodDrop, 1000);
+
+        // Log game analytics (simplified version)
+        function logEvent(type, data) {
+            const event = {
+                type,
+                timestamp: new Date().toISOString(),
+                ...data
+            };
+            console.log('Game Event:', event);
+            // In production, this would send to an analytics service
+        }
+
+        // Hook into game events
+        const originalStart = game.start.bind(game);
+        game.start = function () {
+            logEvent('session_start', {
+                playerId: 'player_' + Date.now(),
+                runId: 'run_' + Date.now(),
+                totalRuns: this.runCount
+            });
+            originalStart();
+        };
+
+        // Initialize persistent hint
+        if (game.allTimeMemories.size > 0) {
+            document.querySelector('.subtitle').innerHTML += '<div style="color: #8b0000; margin-top: 10px;">Memories persist across deaths...</div>';
+        }
+    </script>
+</body>
+
+</html>
