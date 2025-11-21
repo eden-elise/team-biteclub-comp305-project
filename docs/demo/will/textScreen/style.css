@@ -1,0 +1,102 @@
+/* === VARIABLES === */
+:root {
+    --bg-main: #060507;
+    --bg-radial-light: rgba(60,20,20,0.25);
+    --bg-radial-dark: rgba(0,0,0,1);
+
+    --text-main: #EDE4D9;
+    --text-title: #E2C07A;
+
+    --font-body: "IM Fell English", serif;
+    --font-title: "Cinzel Decorative", serif;
+
+    --box-bg: rgba(20, 10, 12, 0.85);
+    --box-border: #3A3235;
+    --box-shadow: rgba(120, 30, 30, 0.2);
+
+    --btn-bg: #1A1214;
+    --btn-hover-bg: #3A3235;
+    --btn-border: #3A3235;
+    --btn-hover-border: #E2C07A;
+    --btn-shadow: rgba(120, 80, 60, 0.15);
+    --btn-hover-shadow: rgba(226,192,122,0.4);
+
+    --title-size: 2rem;
+    --text-size: 1.2rem;
+    --btn-size: 1.1rem;
+
+    --box-padding: 50px 28px;
+    --body-padding: 40px 0;
+}
+
+/* === GLOBAL BACKGROUND (same as battle) === */
+body {
+    background: var(--bg-main);
+    background-image: radial-gradient(circle at center,
+        var(--bg-radial-light) 0%,
+        var(--bg-radial-dark) 70%);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    margin: 0;
+    padding: var(--body-padding);
+}
+
+/* Centered layout */
+main#story-container {
+    width: 720px;
+    margin: auto;
+    text-align: center;
+}
+
+/* === TITLE === */
+.story-title {
+    font-family: var(--font-title);
+    color: var(--text-title);
+    font-size: var(--title-size);
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+}
+
+/* === DARK TEXT BOX === */
+.story-box {
+    background: var(--box-bg);
+    border: 1px solid var(--box-border);
+    padding: var(--box-padding);
+    border-radius: 6px;
+    margin-bottom: 28px;
+
+    box-shadow: 0 0 15px var(--box-shadow);
+    backdrop-filter: blur(2px);
+}
+
+.story-box p {
+    font-size: var(--text-size);
+    line-height: 1.55;
+    margin: 10px 0;
+}
+
+/* === CHOICES === */
+.choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.choice-btn {
+    background-color: var(--btn-bg);
+    padding: 12px 20px;
+    border: 1px solid var(--btn-border);
+    color: var(--text-main);
+    font-family: var(--font-title);
+    font-size: var(--btn-size);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 0 6px var(--btn-shadow);
+}
+
+.choice-btn:hover {
+    background-color: var(--btn-hover-bg);
+    border-color: var(--btn-hover-border);
+    box-shadow: 0 0 8px var(--btn-hover-shadow);
+}

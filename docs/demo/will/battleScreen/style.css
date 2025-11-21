@@ -1,0 +1,156 @@
+:root {
+    --bg: #060507;
+    --bg-radial-light: rgba(60,20,20,0.25);
+    --bg-radial-dark: rgba(0,0,0,1);
+
+    --text: #EDE4D9;
+    --gold: #E2C07A;
+    --gold-alt: #C99D7A;
+    --stone: #3A3235;
+    --stone-dark: #2d2325;
+
+    --hp: #A01820;
+    --hp-glow: #A01820aa;
+
+    --mana: #3F50A8;
+    --mana-glow: #3F50A8aa;
+
+    --btn-bg: #1A1214;
+    --btn-bg-hover: #3A3235;
+
+    --text-secondary: #B49D90;
+}
+
+/* ===== GLOBAL ===== */
+body {
+    background: var(--bg);
+    background-image: radial-gradient(circle at center,
+        var(--bg-radial-light) 0%,
+        var(--bg-radial-dark) 70%);
+    color: var(--text);
+    font-family: "IM Fell English", serif;
+    margin: 0;
+    padding: 30px 0;
+}
+
+main {
+    width: 720px;
+    margin: auto;
+}
+
+/* ===== FIGHTER SECTIONS ===== */
+#battle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 28px;
+}
+
+.fighter {
+    text-align: center;
+    width: 45%;
+}
+
+.fighter-title {
+    font-family: "Cinzel Decorative", serif;
+    font-size: 1.7rem;
+    margin-bottom: 5px;
+    color: var(--gold);
+    letter-spacing: 1px;
+}
+
+.enemy-title {
+    color: var(--gold-alt);
+}
+
+.divider {
+    width: 2px;
+    background: linear-gradient(to bottom, #2a1a1a, #000);
+    height: 280px;
+    opacity: 0.4;
+}
+
+#player-sprite,
+#enemy-sprite {
+    width: 150px;
+    margin-bottom: 10px;
+    image-rendering: pixelated;
+}
+
+/* ===== HP / MANA BARS ===== */
+progress {
+    width: 170px;
+    height: 14px;
+    appearance: none;
+    margin-bottom: 4px;
+}
+
+progress::-webkit-progress-bar {
+    background-color: var(--stone-dark);
+    border-radius: 3px;
+}
+
+progress::-webkit-progress-value {
+    background-color: var(--hp);
+    box-shadow: 0 0 6px var(--hp-glow);
+    border-radius: 3px;
+}
+
+#player-mana::-webkit-progress-value {
+    background-color: var(--mana);
+    box-shadow: 0 0 6px var(--mana-glow);
+}
+
+.bar-label {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+}
+
+/* ===== COMBAT LOG ===== */
+#combat-log {
+    background: rgba(20, 10, 12, 0.85);
+    border: 1px solid var(--stone);
+    padding: 14px 18px;
+    min-height: 70px;
+    border-radius: 6px;
+    box-shadow: 0 0 15px rgba(120, 30, 30, 0.25);
+    backdrop-filter: blur(2px);
+    margin-bottom: 32px;
+}
+
+#combat-log p {
+    margin: 0;
+    font-size: 1.1rem;
+    letter-spacing: 0.3px;
+}
+
+/* ===== ACTION BUTTONS ===== */
+#combat-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+#combat-actions button {
+    background-color: var(--btn-bg);
+    padding: 10px 20px;
+    border: 1px solid var(--stone);
+    color: var(--text);
+    font-family: "Cinzel Decorative", serif;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease;
+    box-shadow: 0 0 6px rgba(120, 80, 60, 0.15);
+}
+
+#combat-actions button:hover {
+    background-color: var(--btn-bg-hover);
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(226,192,122,0.4);
+}
+
+#btn-attack {
+    border-color: #8C1E24;
+}
