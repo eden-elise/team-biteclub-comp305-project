@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fight Screen Demo</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <main id="fight-screen">
+
+        <!-- ===== Battle Header ===== -->
+        <section id="battle-header">
+
+            <!-- Player -->
+            <article class="fighter">
+                <h2 class="fighter-title">APPRENTICE</h2>
+                <img id="player-sprite" src="assets/player/apprentice.png" alt="Player">
+
+                <progress id="player-hp" max="100" value="100"></progress>
+                <label class="bar-label">HP: <span id="player-hp-text">100</span>/100</label>
+
+                <progress id="player-mana" max="50" value="50"></progress>
+                <label class="bar-label">Mana: <span id="player-mana-text">50</span>/50</label>
+            </article>
+
+            <div class="divider"></div>
+
+            <!-- Enemy -->
+            <article class="fighter">
+                <h2 class="fighter-title enemy-title">THRALL</h2>
+                <img id="enemy-sprite" src="assets/enemies/thrall.png" alt="Enemy">
+
+                <progress id="enemy-hp" max="30" value="30"></progress>
+                <label class="bar-label">HP: <span id="enemy-hp-text">30</span>/30</label>
+            </article>
+
+        </section>
+
+        <!-- ===== Combat Log ===== -->
+        <section id="combat-log">
+            <p>The Thrall watches you with hollow eyes…</p>
+        </section>
+
+        <!-- ===== Action Buttons ===== -->
+        <nav id="combat-actions">
+            <button id="btn-attack">Attack</button>
+            <button id="btn-defend">Defend</button>
+            <button id="btn-magic">Blood Magic</button>
+            <button id="btn-items">Inventory</button>
+        </nav>
+
+    </main>
+
+</body>
+</html>
