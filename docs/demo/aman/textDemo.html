@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battle Screen Template</title>
+    <link rel="stylesheet" href="textDemo.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<aside class="inventory-sidebar inventory-sidebar--open" aria-label="Inventory">
+    <h3 class="inventory-sidebar__title">Inventory</h3>
+    <ul class="inventory-sidebar__list">
+        <li class="inventory-sidebar__item inventory-sidebar__item--empty">
+            Empty
+        </li>
+    </ul>
+</aside>
+
+<aside class="memory-index memory-index--open" aria-label="Memory Index">
+    <h3 class="memory-index__title">Memory Fragments</h3>
+    <ul class="memory-index__list">
+        <li class="memory-index__item memory-index__item--locked">
+            <span class="memory-index__icon">🔒</span>
+            <span class="memory-index__text">???</span>
+        </li>
+        <li class="memory-index__item memory-index__item--locked">
+            <span class="memory-index__icon">🔒</span>
+            <span class="memory-index__text">???</span>
+        </li>
+        <li class="memory-index__item memory-index__item--locked">
+            <span class="memory-index__icon">🔒</span>
+            <span class="memory-index__text">???</span>
+        </li>
+        <li class="memory-index__item memory-index__item--locked">
+            <span class="memory-index__icon">🔒</span>
+            <span class="memory-index__text">???</span>
+        </li>
+        <li class="memory-index__item memory-index__item--locked">
+            <span class="memory-index__icon">🔒</span>
+            <span class="memory-index__text">???</span>
+        </li>
+    </ul>
+</aside>
+
+<main id="story-screen" class="story-container">
+    <header class="story-header">
+        <h1 class="story-header__title">
+            <span class="story-header__floor">Floor 1</span>
+            <span class="story-header__divider">—</span>
+            <span class="story-header__scene">Awakening in the Cell</span>
+        </h1>
+
+        <div class="story-header__progress">
+            <div class="progress-item">
+                <span class="progress-item__label">Wave:</span>
+                <span class="progress-item__value">1/10</span>
+            </div>
+            <div class="progress-item">
+                <span class="progress-item__label">Memories:</span>
+                <span class="progress-item__value">0/5</span>
+            </div>
+        </div>
+    </header>
+
+    <article class="story-content" aria-label="Story Text">
+
+        <section class="narrative-section narrative-section--main">
+            <p class="narrative-text narrative-text--intro">
+                Your first sensation is cold.
+            </p>
+
+            <p class="narrative-text">
+                Stone at your back. Iron at your wrists. The taste of dust and copper on your tongue.
+            </p>
+
+            <p class="narrative-text">
+                You open your eyes to darkness broken by a thin slice of moonlight, knifing in through a barred window high above. Chains hang from the walls like iron cobwebs. A heavy door squats in the corner, reinforced with bands of rusted metal.
+            </p>
+
+            <p class="narrative-text narrative-text--emphasis">
+                Your head throbs. Your memories are a smear of light and shadow—faces, words, something that feels like fire—but when you reach for details, they slip away.
+            </p>
+        </section>
+
+        <aside class="memory-fragment" aria-label="Memory Fragment" hidden>
+            <h2 class="memory-fragment__title">Memory Recovered</h2>
+            <p class="memory-fragment__text">
+                A flash of recognition... You've been here before. The scratches on the wall—they're in your handwriting.
+            </p>
+        </aside>
+
+        <section class="narrative-section narrative-section--detail" aria-label="Environment Details">
+            <p class="narrative-text narrative-text--ambient">
+                Beyond these walls, the wind howls angrily. Something drags itself through the corridors beyond your door.
+            </p>
+        </section>
+
+    </article>
+
+    <nav class="choice-panel" aria-label="Story Choices">
+
+        <h2 class="choice-panel__title">What do you do?</h2>
+
+        <ol class="choice-list">
+            <li class="choice-list__item">
+                <button class="choice-btn" data-choice="examine-restraints">
+                    <span class="choice-btn__number">1.</span>
+                    <span class="choice-btn__text">Examine your restraints</span>
+                    <span class="choice-btn__hint" aria-label="Hint">[Observation]</span>
+                </button>
+            </li>
+
+            <li class="choice-list__item">
+                <button class="choice-btn" data-choice="examine-cell">
+                    <span class="choice-btn__number">2.</span>
+                    <span class="choice-btn__text">Examine the cell</span>
+                    <span class="choice-btn__hint" aria-label="Hint">[Investigation]</span>
+                </button>
+            </li>
+
+            <li class="choice-list__item">
+                <button class="choice-btn" data-choice="examine-door">
+                    <span class="choice-btn__number">3.</span>
+                    <span class="choice-btn__text">Examine the door</span>
+                    <span class="choice-btn__hint" aria-label="Hint">[Exploration]</span>
+                </button>
+            </li>
+
+            <li class="choice-list__item">
+                <button class="choice-btn choice-btn--action" data-choice="call-out">
+                    <span class="choice-btn__number">4.</span>
+                    <span class="choice-btn__text">Call out</span>
+                    <span class="choice-btn__hint" aria-label="Hint">[Action]</span>
+                </button>
+            </li>
+        </ol>
+
+        <div class="proceed-section" hidden>
+            <button class="proceed-btn">
+                <span class="proceed-btn__text">Yank the chain loose</span>
+                <span class="proceed-btn__icon">→</span>
+            </button>
+        </div>
+
+    </nav>
+
+    <section id="choice-result" class="choice-result" aria-live="polite" hidden>
+        <div class="choice-result__content">
+        </div>
+
+        <button class="choice-result__back">Back to choices</button>
+    </section>
+
+</main>
+
+<div class="story-effects" aria-hidden="true">
+    <div class="particle particle--1"></div>
+    <div class="particle particle--2"></div>
+    <div class="particle particle--3"></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYTECLUB - Battle Screen</title>
+    <link rel="stylesheet" href="battleDemo.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+<main id="battle-screen" class="battle-container">
+
+    <header id="battle-header" class="battle-header">
+
+        <section class="combatant combatant--player" aria-label="Player Status">
+            <h2 class="combatant__name">THE APPRENTICE</h2>
+
+            <figure class="combatant__avatar">
+                <img src="docs/assets/character/..." alt="The Apprentice picture here" class="combatant__sprite">
+            </figure>
+
+            <div class="combatant__stats">
+                <div class="stat-bar stat-bar--hp">
+                    <label for="player-hp" class="stat-bar__label">
+                        HP: <span id="player-hp-text">100</span>/100
+                    </label>
+                    <progress
+                            id="player-hp"
+                            class="stat-bar__progress"
+                            max="100"
+                            value="100"
+                            aria-label="Player health points">
+                    </progress>
+                </div>
+
+                <div class="stat-bar stat-bar--mana">
+                    <label for="player-mana" class="stat-bar__label">
+                        Mana: <span id="player-mana-text">50</span>/50
+                    </label>
+                    <progress
+                            id="player-mana"
+                            class="stat-bar__progress"
+                            max="50"
+                            value="50"
+                            aria-label="Player mana points">
+                    </progress>
+                </div>
+            </div>
+        </section>
+
+        <div class="battle-divider" aria-hidden="true"></div>
+
+        <section class="combatant combatant--enemy" aria-label="Enemy Status">
+            <h2 class="combatant__name combatant__name--enemy">THRALL</h2>
+
+            <figure class="combatant__avatar">
+                <img src="docs/assets/character/..." alt="Thrall Enemy picture here" class="combatant__sprite">
+            </figure>
+
+            <div class="combatant__stats">
+                <div class="stat-bar stat-bar--hp">
+                    <label for="enemy-hp" class="stat-bar__label">
+                        HP: <span id="enemy-hp-text">30</span>/30
+                    </label>
+                    <progress
+                            id="enemy-hp"
+                            class="stat-bar__progress"
+                            max="30"
+                            value="30"
+                            aria-label="Enemy health points">
+                    </progress>
+                </div>
+            </div>
+        </section>
+
+    </header>
+
+    <section id="combat-log" class="combat-log" aria-live="polite" aria-label="Combat Messages">
+        <div class="combat-log__content">
+            <p class="combat-log__entry combat-log__entry--intro">
+                The Thrall emerges from the shadows (Put demo text area here)
+            </p>
+        </div>
+    </section>
+
+    <nav id="action-panel" class="action-panel" aria-label="Combat Actions">
+        <ul class="action-list action-list--primary">
+            <li class="action-list__item">
+                <button
+                        id="btn-attack"
+                        class="action-btn action-btn--attack"
+                        aria-label="Physical Attack">
+                    <span class="action-btn__icon">⚔</span>
+                    <span class="action-btn__text">Attack</span>
+                </button>
+            </li>
+            <li class="action-list__item">
+                <button
+                        id="btn-defend"
+                        class="action-btn action-btn--defend"
+                        aria-label="Defensive Stance">
+                    <span class="action-btn__icon">🛡</span>
+                    <span class="action-btn__text">Defend</span>
+                </button>
+            </li>
+            <li class="action-list__item">
+                <button
+                        id="btn-magic"
+                        class="action-btn action-btn--magic"
+                        aria-label="Cast Blood Magic">
+                    <span class="action-btn__icon">🩸</span>
+                    <span class="action-btn__text">Blood Magic</span>
+                </button>
+            </li>
+            <li class="action-list__item">
+                <button
+                        id="btn-items"
+                        class="action-btn action-btn--items"
+                        aria-label="Open Inventory">
+                    <span class="action-btn__icon">💼</span>
+                    <span class="action-btn__text">Inventory</span>
+                </button>
+            </li>
+        </ul>
+        <div id="inventory-panel" class="inventory-panel" hidden> <!-- Here is example of inventory. Change hidden -->
+            <h3 class="inventory-panel__title">Inventory</h3>
+            <ul class="inventory-list">
+                <li class="inventory-list__item">
+                    <button class="item-btn" data-item="health-potion">
+                        Health Potion <span class="item-count">(3)</span>
+                    </button>
+                </li>
+                <li class="inventory-list__item">
+                    <button class="item-btn" data-item="mana-potion">
+                        Mana Potion <span class="item-count">(2)</span>
+                    </button>
+                </li>
+                <li class="inventory-list__item">
+                    <button class="item-btn" data-item="smoke-bomb">
+                        Smoke Bomb <span class="item-count">(1)</span>
+                    </button>
+                </li>
+            </ul>
+            <button class="inventory-panel__close">Close</button>
+        </div>
+
+    </nav>
+    <footer class="battle-footer">
+        <div class="turn-indicator">
+            <span class="turn-indicator__label">Turn:</span>
+            <span class="turn-indicator__count" id="turn-count">1</span>
+        </div>
+        <div class="floor-indicator">
+            <span class="floor-indicator__label">Floor:</span>
+            <span class="floor-indicator__number" id="floor-number">1</span>
+        </div>
+    </footer>
+
+</main>
+
+<div class="battle-effects" aria-hidden="true">
+    <div class="fog-layer fog-layer--1"></div>
+    <div class="fog-layer fog-layer--2"></div>
+</div>
+
+
+</body>
+</html>
